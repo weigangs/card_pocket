@@ -60,7 +60,7 @@ class DateUtils {
 
   static String convertToDateFullDt(DateTime input) {
     try {
-      var formatter = new DateFormat('dd MMM yyyy');
+      var formatter = DateFormat('dd MMM yyyy');
       return formatter.format(input);
     } catch (e) {
       return Constants.empty;

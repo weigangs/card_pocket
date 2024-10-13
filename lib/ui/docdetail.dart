@@ -195,11 +195,11 @@ class DocDetailState extends State<DocDetail> {
                       }),
                     )
                   ]),
-                  Row(children: <Widget>[
+                  const Row(children: <Widget>[
                     Expanded(child: Text(' ')),
                   ]),
                   Row(children: <Widget>[
-                    Expanded(child: Text('a: Alert @ 1.5 & 1 year(s)')),
+                    const Expanded(child: Text('Alert less than a year')),
                     Switch(
                         value: fqYearCtrl,
                         onChanged: (bool value) {
@@ -209,7 +209,7 @@ class DocDetailState extends State<DocDetail> {
                         }),
                   ]),
                   Row(children: <Widget>[
-                    Expanded(child: Text('b: Alert @ 6 months')),
+                    const Expanded(child: Text('Alert less than six months')),
                     Switch(
                         value: fqHalfYearCtrl,
                         onChanged: (bool value) {
@@ -219,7 +219,7 @@ class DocDetailState extends State<DocDetail> {
                         }),
                   ]),
                   Row(children: <Widget>[
-                    Expanded(child: Text('c: Alert @ 3 months')),
+                    const Expanded(child: Text('Alert less than three months')),
                     Switch(
                         value: fqQuarterCtrl,
                         onChanged: (bool value) {
@@ -229,7 +229,7 @@ class DocDetailState extends State<DocDetail> {
                         }),
                   ]),
                   Row(children: <Widget>[
-                    Expanded(child: Text('d: Alert @ 1 month or less')),
+                    const Expanded(child: Text('Alert less than a month')),
                     Switch(
                         value: fqMonthCtrl,
                         onChanged: (bool value) {
@@ -239,19 +239,11 @@ class DocDetailState extends State<DocDetail> {
                         }),
                   ]),
                   Container(
-                      padding: const EdgeInsets.only(left: 40.0, top: 20.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          elevation: 5,
-                          padding: const EdgeInsets.all(12.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text("Save"),
-                      )),
+                      padding: const EdgeInsets.only(left: 20.0, top: 20.0),
+                      child: FilledButton(
+                  onPressed: _submitForm,
+                  child: const Text('Save'),
+                )),
                 ],
               ),
             )));
