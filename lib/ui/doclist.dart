@@ -16,7 +16,7 @@ class DocList extends StatefulWidget {
 
 class DocListState extends State<DocList> {
   DbHelper dbh = DbHelper();
-  List<Doc> docs = <Doc> [];
+  List<Doc> docs = <Doc>[];
   int count = 0;
   DateTime cDate = DateTime.now();
   @override
@@ -30,29 +30,29 @@ class DocListState extends State<DocList> {
         // result here is the actual reference to the database object
         (result) {
       final docsFuture = dbh.getDocs();
-      docsFuture.then(
-          // result here is the list of docs in the database
-          (result) {
-        if (result.length >= 0) {
-          List<Doc> docList = <Doc>[];
-          var count = result.length;
-          for (int i = 0; i <= count - 1; i++) {
-            docList.add(Doc.fromOject(result[i]));
-          }
-          setState(() {
-            if (this.docs.length > 0) {
-              this.docs.clear();
-            }
-            this.docs = docList;
-            this.count = count;
-          });
+      docsFuture.then((result) {
+        if (result.isEmpty) {
+          return;
         }
+
+        List<Doc> docList = <Doc>[];
+        var count = result.length;
+        for (int i = 0; i <= count - 1; i++) {
+          docList.add(Doc.fromOject(result[i]));
+        }
+        setState(() {
+          if (docs.isNotEmpty) {
+            docs.clear();
+          }
+          docs = docList;
+          count = count;
+        });
       });
     });
   }
 
   void _checkDate() {
-    const secs = Duration(seconds: 10);
+    const secs = Duration(hours: 6);
     new Timer.periodic(secs, (Timer t) {
       DateTime nw = DateTime.now();
       if (cDate.day != nw.day ||
@@ -77,17 +77,17 @@ class DocListState extends State<DocList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Reset"),
-          content: new Text("Do you want to delete all local data?"),
+          title: const Text("Reset"),
+          content: const Text("Do you want to delete all local data?"),
           actions: <Widget>[
             TextButton(
-              child: new Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: new Text("OK"),
+              child: const Text("OK"),
               onPressed: () {
                 Future f = _resetLocalData();
                 f.then((result) {
@@ -107,8 +107,8 @@ class DocListState extends State<DocList> {
       final dDocs = dbh.deleteRows(DbHelper.tblDocs);
       dDocs.then((result) {
         setState(() {
-          this.docs.clear();
-          this.count = 0;
+          docs.clear();
+          count = 0;
         });
       });
     });
@@ -132,19 +132,18 @@ class DocListState extends State<DocList> {
           elevation: 1.0,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor:
-                  (card_utils.Val.getExpiryStr(docs[position].expiration) != "0")
-                      ? Colors.blue
-                      : Colors.red,
+              backgroundColor: _computeAvatarColorByExpiryStr(docs[position]),
               child: Text(
                 docs[position].id.toString(),
               ),
             ),
             title: Text(docs[position].title),
-            subtitle: Text(card_utils.Val.getExpiryStr(this.docs[position].expiration) +
-                dl +
-                "\nExp: " +
-                card_utils.DateUtils.convertToDateFull(this.docs[position].expiration)),
+            subtitle: Text(
+                card_utils.Val.getExpiryStr(docs[position].expiration) +
+                    dl +
+                    "\nExp: " +
+                    card_utils.DateUtils.convertToDateFull(
+                        docs[position].expiration)),
             onTap: () {
               navigateToDetail(docs[position]);
             },
@@ -152,6 +151,35 @@ class DocListState extends State<DocList> {
         );
       },
     );
+  }
+
+  Color _computeAvatarColorByExpiryStr(Doc doc) {
+    String remainDays = card_utils.Val.getExpiryStr(doc.expiration);
+    int intRemainDays = int.parse(remainDays);
+    if (intRemainDays == 0) {
+      return Colors.red;
+    }
+    if (card_utils.Val.intToBool(doc.fqMonth)) {
+      if (intRemainDays < 30) {
+        return Colors.orange;
+      }
+    }
+    if (card_utils.Val.intToBool(doc.fqQuarter)) {
+      if (intRemainDays < 60) {
+        return Colors.orange;
+      }
+    }
+    if (card_utils.Val.intToBool(doc.fqHalfYear)) {
+      if (intRemainDays < 180) {
+        return Colors.orange;
+      }
+    }
+    if (card_utils.Val.intToBool(doc.fqYear)) {
+      if (intRemainDays < 365) {
+        return Colors.orange;
+      }
+    }
+    return Colors.blue;
   }
 
   @override
@@ -163,7 +191,7 @@ class DocListState extends State<DocList> {
     _checkDate();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text("DocExpire"), actions: <Widget>[
+      appBar: AppBar(title: const Text("DocExpire"), actions: <Widget>[
         PopupMenuButton(
           onSelected: _selectMenu,
           itemBuilder: (BuildContext context) {
@@ -186,7 +214,8 @@ class DocListState extends State<DocList> {
               navigateToDetail(Doc.withId(-1, "", "", 1, 1, 1, 1));
             },
             tooltip: "Add new doc",
-            child: Icon(Icons.add),
+            shape: const CircleBorder(),
+            child: const Icon(Icons.edit),
           ),
         ),
       ),
