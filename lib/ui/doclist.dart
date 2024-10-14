@@ -10,6 +10,8 @@ const menuReset = "Reset Local Data";
 List<String> menuOptions = const <String>[menuReset];
 
 class DocList extends StatefulWidget {
+  const DocList({super.key});
+
   @override
   State<StatefulWidget> createState() => DocListState();
 }
@@ -25,15 +27,13 @@ class DocListState extends State<DocList> {
   }
 
   Future getData() async {
+    
     final dbFuture = dbh.initializeDb();
     dbFuture.then(
         // result here is the actual reference to the database object
         (result) {
       final docsFuture = dbh.getDocs();
       docsFuture.then((result) {
-        if (result.isEmpty) {
-          return;
-        }
 
         List<Doc> docList = <Doc>[];
         var count = result.length;
@@ -45,7 +45,7 @@ class DocListState extends State<DocList> {
             docs.clear();
           }
           docs = docList;
-          count = count;
+          this.count = count;
         });
       });
     });
@@ -139,11 +139,8 @@ class DocListState extends State<DocList> {
             ),
             title: Text(docs[position].title),
             subtitle: Text(
-                card_utils.Val.getExpiryStr(docs[position].expiration) +
-                    dl +
-                    "\nExp: " +
-                    card_utils.DateUtils.convertToDateFull(
-                        docs[position].expiration)),
+                "${card_utils.Val.getExpiryStr(docs[position].expiration)}$dl\nExp: ${card_utils.DateUtils.convertToDateFull(
+                        docs[position].expiration)}"),
             onTap: () {
               navigateToDetail(docs[position]);
             },

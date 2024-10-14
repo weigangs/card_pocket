@@ -127,7 +127,6 @@ class DocDetailState extends State<DocDetail> {
 
   @override
   Widget build(BuildContext context) {
-    const String cStrDays = "Enter a number of days";
     TextStyle? tStyle = Theme.of(context).textTheme.titleMedium;
     String ttl = widget.doc.title;
     return Scaffold(
@@ -178,9 +177,7 @@ class DocDetailState extends State<DocDetail> {
                       maxLength: 10,
                       decoration: InputDecoration(
                           icon: const Icon(Icons.calendar_today),
-                          hintText: 'Expiry date (i.e. ' +
-                              card_utils.DateUtils.daysAheadAsStr(daysAhead) +
-                              ')',
+                          hintText: 'Expiry date (i.e. ${card_utils.DateUtils.daysAheadAsStr(daysAhead)})',
                           labelText: 'Expiry Date'),
                       keyboardType: TextInputType.number,
                       validator: (val) => card_utils.DateUtils.isValidDate(val!)
